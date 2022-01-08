@@ -1,12 +1,17 @@
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
-const messages: Array<any> = [];
-const users: Array<any> = [];
+export type Message = {
+    user: string,
+    message: string
+}
+
+const messages: Array<Message> = [];
+const users: Array<string> = [];
 
 function handleSocketIO(server: any) {
     const io = new Server(server);
 
-    io.on('connection', (socket: any) => {
+    io.on('connection', (socket: Socket) => {
         console.log(`User ${socket.id} connected.`);
 
         users.push(socket.id);
@@ -14,7 +19,7 @@ function handleSocketIO(server: any) {
         socket.emit('handshake', socket.id, messages, users);
         socket.broadcast.emit('userConnected', socket.id);
 
-        socket.on('message', (message: any) => {
+        socket.on('message', (message: Message) => {
             messages.push(message);
             socket.broadcast.emit('message', message);
         });
