@@ -1,0 +1,85 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+div#container {
+    display: flex;
+    flex-direction: row;
+}
+
+div#users {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 200px;
+    height: 600px;
+    background-color: orangered;
+}
+
+div#users span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 30px;
+    font-weight: bold;
+    font-size: 8;
+    color: #FFF;
+}
+
+div#messages-ui {
+    display: flex;
+    flex-direction: column;
+}
+
+div#messages-box {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    width: 600px;
+    height: 550px;
+    background-color: lightgray;
+}
+
+div#messages-box div#line {
+    padding: 5px;
+}
+
+div#message-input-ui {
+    display: flex;
+    width: 600px;
+    height: 50px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+input[type='text'] {
+    width: 470px;
+    height: 35px;
+    padding: 5px;
+    border: 1px solid lightgray;
+    color: gray;
+    border-radius: 16px;
+    font-size: large;
+}
+
+input[type='text']:focus {
+    outline: none !important;
+    border: 1px solid orangered;
+}
+
+button[type='submit'] {
+    width: 18%;
+    height: 45px;
+    border: 0;
+    border-radius:16px;
+    color: gray;
+}
+
+button[type='submit']:hover {
+    border: 1px solid orangered;
+    color: orangered;
+    cursor: pointer;
+}

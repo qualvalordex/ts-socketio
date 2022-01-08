@@ -7,16 +7,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socket.IO Learning</title>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
         integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
         crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
 </head>
 
 <body>
-    <h1>Testando websockets...</h1>
+    <div id='container'>
+        <div id='users'></div>
+        <div id='messages-ui'>
+            <div id='messages-box'></div>
+            <div id='message-input-ui'>
+                <input id='message' type="text" placeholder="Type your message..." />
+                <button type="submit" onclick="sendMessage()">Send message</button>
+            </div>
+        </div>
+    </div>
 
     <script type="text/javascript">
-        const socket = io();
+        const socket = io('http://localhost:3030');
+
+        $(document).ready(() => {
+            socket.emit('handshake');
+        })
+
+        socket.on('handshake', (user, history, connected) => {
+            console.log(user, history, connected);
+            const users = connected;
+            for (const user of users) {
+                $('div#users').append(
+                    '<span>' + user + '</span>'
+                );
+            }
+
+            const messages = history;
+            for (const message of messages) {
+                $('#messages-box').append(
+                    '<div id="line"><b>' + message.user + '</b>: <span>' + message.message + '</span></div>'
+                );
+            }
+        });
+
+        socket.on('userConnected', (user) => {
+            $('div#users').append(
+                '<span>' + user + '</span>'
+            );
+        });
+
+        socket.on('userDisconnected', (user) => {
+            $('div#users span').each((id, el) => {
+                if (el.innerHTML === user) {
+                    el.remove();
+                }
+            });
+        });
+
+        socket.on('message', (message) => {
+            $('#messages-box').append(
+                '<div id="line"><b>' + message.user + '</b>: <span>' + message.message + '</span></div>'
+            );
+
+            $('#messages-box').animate({ scrollTop: 2000000000 }, "slow");
+        });
+
+        function sendMessage() {
+            const message = $('#message').val();
+            if (message) {
+                $('#messages-box').append(
+                    '<div id="line"><b>' + socket.id + '</b>: <span>' + message + '</span></div>'
+                );
+
+                $('#messages-box').animate({ scrollTop: 2000000000 }, 'slow');
+
+                socket.emit('message', { user: socket.id, message });
+
+                $('#message').val('');
+                $('#message').focus();
+            }
+        }
+
+        $(document).keypress(e => {
+            if (e.keyCode === 13) {
+                if ($('#message').is(':focus')) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            }
+        });
     </script>
 
 </body>
